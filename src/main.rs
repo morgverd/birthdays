@@ -29,10 +29,7 @@ fn get_birthdays(config: &ConfigFile) -> Vec<BirthdayItem> {
         match BirthdayPerson::from_config(k.clone(), v.clone()) {
             Ok(person) => match person.date.get_next_date(now) {
                 None => eprintln!("Couldn't get BirthdayPerson next date for '{k}'!"),
-                Some(date) => {
-                    println!("{k}: {:#?}", date.timestamp());
-                    people.push((person, date))
-                }
+                Some(date) => people.push((person, date))
             },
             Err(e) => eprintln!("Couldn't create BirthdayPerson for '{k}' with error: {e}")
         }
