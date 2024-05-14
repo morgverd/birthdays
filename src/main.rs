@@ -1,8 +1,7 @@
 use std::ops::Add;
-use std::process::exit;
 use std::thread::sleep;
 use std::time::Duration;
-use chrono::{Datelike, DateTime, Timelike, Utc};
+use chrono::{DateTime, Timelike, Utc};
 use chrono_tz::Tz;
 use crate::birthday::BirthdayPerson;
 use crate::config::ConfigFile;
@@ -30,7 +29,10 @@ fn get_birthdays(config: &ConfigFile) -> Vec<BirthdayItem> {
         match BirthdayPerson::from_config(k.clone(), v.clone()) {
             Ok(person) => match person.date.get_next_date(now) {
                 None => eprintln!("Couldn't get BirthdayPerson next date for '{k}'!"),
-                Some(date) => people.push((person, date))
+                Some(date) => {
+                    println!("{k}: {:#?}", date.timestamp());
+                    people.push((person, date))
+                }
             },
             Err(e) => eprintln!("Couldn't create BirthdayPerson for '{k}' with error: {e}")
         }
@@ -75,18 +77,12 @@ fn main() -> () {
     let config = match config::read_file() {
         Ok(config) => config,
         Err(e) => {
-            eprintln!("{e}");
-            exit(1);
+            return eprintln!("Failed to read config file: {e}");
         }
     };
 
     // Convert config into a set of BirthdayPerson and DateTime(s).
     let mut people = get_birthdays(&config);
-
-    // TODO: REMOVE THIS, FOR DEBUG ONLY.
-    for i in 0..3 {
-        people.get_mut(i).unwrap().1 = people.get(i).unwrap().1.with_year(2024).unwrap();
-    }
 
     // Main loop.
     let mut first_run = true;

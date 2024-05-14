@@ -101,7 +101,7 @@ pub fn run(config: &ConfigFile, people: Vec<&BirthdayPerson>) -> () {
         let json = match serde_json::to_string(&webhook) {
             Ok(json) => json,
             Err(e) => {
-                eprintln!("Couldn't serialize DiscordWebhook for server '{server_id}'!");
+                eprintln!("Couldn't serialize DiscordWebhook for server '{server_id}': {e:#?}!");
                 continue;
             }
         };
