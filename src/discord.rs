@@ -20,7 +20,7 @@ struct DiscordWebhook {
     embeds: Vec<Embed>
 }
 
-pub fn create_embed(people: Vec<(String, &PersonDiscordConfig)>) -> Embed {
+fn create_embed(people: Vec<(String, &PersonDiscordConfig)>) -> Embed {
 
     // Get all mentions either as a discord mention or just bold name if there isn't an ID.
     let mut mentions = Vec::<String>::with_capacity(people.len());
@@ -46,7 +46,7 @@ pub fn create_embed(people: Vec<(String, &PersonDiscordConfig)>) -> Embed {
         .title("Happy Birthday!")
         .description(format!("{} {}.", random_prefix, mentions.join(", ")))
         .image(ImageSource::url(format!("{ASSET_URL_BASE}/happy_birthday.gif")).unwrap())
-        .footer(EmbedFooterBuilder::new("Sent by morgverd.com birthdays manager v2"))
+        .footer(EmbedFooterBuilder::new("Sent by morgverd.com birthdays manager v2."))
         .build()
 }
 
@@ -98,7 +98,7 @@ pub fn run(config: &ConfigFile, people: Vec<&BirthdayPerson>) -> () {
         };
 
         // Serialize the webhook struct into JSON to send.
-        let json = match serde_json::to_string(&webhook) {
+        let json = match serde_json::to_string::<DiscordWebhook>(&webhook) {
             Ok(json) => json,
             Err(e) => {
                 eprintln!("Couldn't serialize DiscordWebhook for server '{server_id}': {e:#?}!");

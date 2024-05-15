@@ -1,7 +1,7 @@
 use std::ops::Add;
 use std::thread::sleep;
 use std::time::Duration;
-use chrono::{DateTime, Timelike, Utc};
+use chrono::{Datelike, DateTime, Timelike, Utc};
 use chrono_tz::Tz;
 use crate::birthday::BirthdayPerson;
 use crate::config::ConfigFile;
@@ -29,7 +29,10 @@ fn get_birthdays(config: &ConfigFile) -> Vec<BirthdayItem> {
         match BirthdayPerson::from_config(k.clone(), v.clone()) {
             Ok(person) => match person.date.get_next_date(now) {
                 None => eprintln!("Couldn't get BirthdayPerson next date for '{k}'!"),
-                Some(date) => people.push((person, date))
+                Some(date) => {
+                    println!("{}: {} [{}]", person.name, date.format("%d/%m/%Y"), date.timestamp());
+                    people.push((person, date));
+                }
             },
             Err(e) => eprintln!("Couldn't create BirthdayPerson for '{k}' with error: {e}")
         }
@@ -104,6 +107,7 @@ fn main() -> () {
                     Some(new_date) => {
                         *date = new_date;
                         current.push(person);
+                        println!("It's {}'s birthday! Next: {}", person.name, new_date.format("%d/%m/%Y"));
                     }
                 }
             }
