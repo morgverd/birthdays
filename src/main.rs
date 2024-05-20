@@ -1,7 +1,7 @@
 use std::ops::Add;
 use std::thread::sleep;
 use std::time::Duration;
-use chrono::{Datelike, DateTime, Timelike, Utc};
+use chrono::{DateTime, Timelike, Utc};
 use chrono_tz::Tz;
 use crate::birthday::BirthdayPerson;
 use crate::config::ConfigFile;
@@ -27,10 +27,10 @@ fn get_birthdays(config: &ConfigFile) -> Vec<BirthdayItem> {
     // Convert each PersonBirthdayConfig into a BirthdayPerson & get the next birthday DateTime (to validate the date).
     for (k, v) in config.people.iter() {
         match BirthdayPerson::from_config(k.clone(), v.clone()) {
-            Ok(person) => match person.date.get_next_date(now) {
+            Ok(person) => match person.get_next_date(now) {
                 None => eprintln!("Couldn't get BirthdayPerson next date for '{k}'!"),
                 Some(date) => {
-                    println!("{}: {} [{}]", person.name, date.format("%d/%m/%Y"), date.timestamp());
+                    println!("{}: {} [{}][{}]", person.name, date.format("%d/%m/%Y"), date.timestamp(), date.timezone().to_string());
                     people.push((person, date));
                 }
             },
@@ -102,7 +102,7 @@ fn main() -> () {
         // Find people with a birthday past now and update it.
         for (person, date) in people.iter_mut() {
             if *date < now {
-                match person.date.get_next_date(now) {
+                match person.get_next_date(now) {
                     None => eprintln!("Failed to update next birthday DateTime for '{}'", person.name),
                     Some(new_date) => {
                         *date = new_date;

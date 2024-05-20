@@ -8,8 +8,10 @@ use crate::birthday::BirthdayPerson;
 use crate::config::{ConfigFile, PersonDiscordConfig};
 
 const ASSET_URL_BASE: &'static str = "https://morgverd.com/assets/images/birthdays";
-const RANDOM_MESSAGES: [&'static str; 1] = [
-    "Can you believe its been a year already?"
+const RANDOM_MESSAGES: [&'static str; 3] = [
+    "Can you believe its been a year already?",
+    "The grow up so fast.",
+    "As is tradition around here,"
 ];
 
 #[derive(Serialize, Debug)]
@@ -44,7 +46,7 @@ fn create_embed(people: Vec<(String, &PersonDiscordConfig)>) -> Embed {
     // Build the final embed.
     EmbedBuilder::new()
         .title("Happy Birthday!")
-        .description(format!("{} {}.", random_prefix, mentions.join(", ")))
+        .description(format!("{} Please wish a very happy birthday to {}.", random_prefix, mentions.join(", ")))
         .image(ImageSource::url(format!("{ASSET_URL_BASE}/happy_birthday.gif")).unwrap())
         .footer(EmbedFooterBuilder::new("Sent by morgverd.com birthdays manager v2."))
         .build()

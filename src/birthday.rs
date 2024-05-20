@@ -6,42 +6,24 @@ use crate::config::{PersonBirthdayConfig, PersonDiscordConfig};
 #[derive(Debug)]
 pub struct BirthdayPerson {
     pub name: String,
-    pub date: Birthdate,
-    pub discord: Option<PersonDiscordConfig>
-}
-impl BirthdayPerson {
-    pub fn from_config(name: String, config: PersonBirthdayConfig) -> Result<Self, String> {
+    pub discord: Option<PersonDiscordConfig>,
 
-        let date = match Birthdate::from_config(&config) {
-            Ok(date) => date,
-            Err(error) => return Err(format!("Failed to create BirthDate: {error}").to_owned())
-        };
-
-        Ok(BirthdayPerson {
-            name,
-            date,
-            discord: config.discord
-        })
-    }
-}
-
-#[derive(Debug)]
-pub struct Birthdate {
     day: u32,
     month: u32,
     tz: Tz
 }
-impl Birthdate {
-
-    fn from_config(config: &PersonBirthdayConfig) -> Result<Self, &'static str> {
+impl BirthdayPerson {
+    pub fn from_config(key_name: String, config: PersonBirthdayConfig) -> Result<Self, String> {
 
         // Convert timezone from config string.
         let timezone = match Tz::from_str(config.tz.as_str()) {
             Ok(timezone) => timezone,
-            Err(_) => return Err("Could not convert timezone!")
+            Err(_) => return Err("Could not convert timezone!".to_owned())
         };
 
-        Ok(Birthdate {
+        Ok(BirthdayPerson {
+            name: key_name,
+            discord: config.discord,
             day: config.date.0,
             month: config.date.1,
             tz: timezone
