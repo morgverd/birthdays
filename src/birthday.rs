@@ -3,7 +3,6 @@ use chrono::{Datelike, DateTime, MappedLocalTime, TimeZone};
 use chrono_tz::Tz;
 use crate::config::{PersonBirthdayConfig, PersonDiscordConfig};
 
-#[derive(Debug)]
 pub struct BirthdayPerson {
     pub name: String,
     pub discord: Option<PersonDiscordConfig>,

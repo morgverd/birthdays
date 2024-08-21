@@ -3,30 +3,37 @@ use std::fs::File;
 use std::io::Read;
 use serde::Deserialize;
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Deserialize, Clone)]
 pub struct PersonDiscordConfig {
     pub id: Option<String>,
     pub servers: Vec<String>,
     #[serde(default)] pub ping_everyone: Option<bool>
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Deserialize, Clone)]
 pub struct PersonBirthdayConfig {
     pub date: (u32, u32),
     pub tz: String,
     #[serde(default)] pub discord: Option<PersonDiscordConfig>
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Deserialize)]
 pub struct DiscordServerConfig {
     pub webhook: String,
     #[serde(default)] pub default_ping_everyone: bool
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Deserialize)]
+pub struct HealthcheckConfig {
+    pub url: String,
+    pub interval: u64
+}
+
+#[derive(Deserialize)]
 pub struct ConfigFile {
     pub people: HashMap<String, PersonBirthdayConfig>,
-    pub servers: HashMap<String, DiscordServerConfig>
+    pub servers: HashMap<String, DiscordServerConfig>,
+    #[serde(default)] pub healthcheck: Option<HealthcheckConfig>
 }
 
 pub fn read_file() -> Result<ConfigFile, String> {

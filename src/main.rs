@@ -9,6 +9,7 @@ use crate::config::ConfigFile;
 pub mod birthday;
 mod config;
 mod discord;
+mod healthcheck;
 
 pub static BASE_TIMEZONE: Tz = Tz::UTC;
 type BirthdayItem = (BirthdayPerson, DateTime<Tz>);
@@ -83,6 +84,11 @@ fn main() -> () {
 
     // Convert config into a set of BirthdayPerson and DateTime(s).
     let mut people = get_birthdays(&config);
+
+    // Start healthcheck thread if the config exists.
+    if let Some(healthcheck_config) = &config.healthcheck {
+        healthcheck::start(healthcheck_config);
+    }
 
     // Main loop.
     let mut first_run = true;

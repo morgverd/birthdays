@@ -49,6 +49,7 @@ fn create_embed(people: Vec<(String, &PersonDiscordConfig)>) -> Embed {
         .description(format!("{} Please wish a very happy birthday to {}.", random_prefix, mentions.join(", ")))
         .image(ImageSource::url(format!("{ASSET_URL_BASE}/happy_birthday.gif")).unwrap())
         .footer(EmbedFooterBuilder::new("Sent by morgverd.com birthdays manager v2."))
+        .color(0x17_83_e8)
         .build()
 }
 
